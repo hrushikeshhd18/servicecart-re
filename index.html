@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicecart - App Redirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.15), transparent 25%);
+            box-sizing: border-box;
+        }
+
+        .container {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 420px;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            margin-top: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Loading Animation */
+        .loader-wrapper {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .loader {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            border-left-color: rgba(59, 130, 246, 0.4);
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .loader-inner {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: calc(100% - 16px);
+            height: calc(100% - 16px);
+            border: 4px solid transparent;
+            border-radius: 50%;
+            border-top-color: #8b5cf6;
+            border-right-color: rgba(139, 92, 246, 0.4);
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loading-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #desktop-view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        /* Store Buttons */
+        .store-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-sizing: border-box;
+            background-color: rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+
+        .store-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .store-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .store-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .store-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .store-btn span {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loading-view">
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+                <div class="loader-inner"></div>
+            </div>
+            <h1>Taking you to the app...</h1>
+            <p>Please wait while we locate the correct store for your device.</p>
+        </div>
+
+        <!-- Desktop Fallback State -->
+        <div id="desktop-view">
+            <h1>Get Servicecart</h1>
+            <p>It looks like you're on a desktop. Choose your preferred app store to download Servicecart.</p>
+            
+            <div class="button-group">
+                <a href="https://apps.apple.com/in/app/servicecart/id6477325801" class="store-btn" target="_blank" rel="noopener noreferrer">
+                    <span>
+                        <svg class="icon" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                        Download on the App Store
+                    </span>
+                </a>
+                
+                <a href="https://play.google.com/store/apps/details?id=com.servicecaart.userapp" class="store-btn" target="_blank" rel="noopener noreferrer">
+                    <span>
+                        <svg class="icon" viewBox="0 0 512 512"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
+                        Get it on Google Play
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Target URLs
+            const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.servicecaart.userapp';
+            const APP_STORE_URL = 'https://apps.apple.com/in/app/servicecart/id6477325801';
+
+            function getMobileOperatingSystem() {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+                // iOS detection (including iPadOS)
+                if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                    return 'iOS';
+                }
+                
+                // Mac OS check to see if it's an iPad pretending to be a Mac (iOS 13+)
+                if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+                    return 'iOS';
+                }
+
+                // Android detection
+                if (/android/i.test(userAgent)) {
+                    return 'Android';
+                }
+
+                return 'unknown';
+            }
+
+            function redirect() {
+                const os = getMobileOperatingSystem();
+                
+                if (os === 'iOS') {
+                    window.location.replace(APP_STORE_URL);
+                    return true;
+                } else if (os === 'Android') {
+                    window.location.replace(PLAY_STORE_URL);
+                    return true;
+                }
+                
+                return false;
+            }
+
+            // Immediately attempt to redirect
+            const isRedirecting = redirect();
+
+            // Setup UI based on redirect status
+            window.addEventListener('load', () => {
+                if (!isRedirecting) {
+                    // Small delay to prevent flashing if the user is on mobile but redirect takes a split second
+                    setTimeout(() => {
+                        const loadingView = document.getElementById('loading-view');
+                        const desktopView = document.getElementById('desktop-view');
+                        
+                        if (loadingView && desktopView) {
+                            loadingView.style.display = 'none';
+                            desktopView.style.display = 'flex';
+                        }
+                    }, 400); 
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
