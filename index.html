@@ -236,11 +236,6 @@
             const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.servicecaart.userapp';
             const APP_STORE_URL = 'https://apps.apple.com/in/app/servicecart/id6477325801';
 
-            // Deep link schemes (Configure these in your app to open it directly)
-            // Android Intent will auto-fallback to the PLAY_STORE_URL if the app isn't installed.
-            const ANDROID_INTENT_URI = 'intent://#Intent;package=com.servicecaart.userapp;scheme=servicecart;S.browser_fallback_url=' + encodeURIComponent(PLAY_STORE_URL) + ';end;';
-            const IOS_APP_SCHEME = 'servicecart://';
-
             function getMobileOperatingSystem() {
                 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
@@ -266,15 +261,12 @@
                 const os = getMobileOperatingSystem();
                 
                 if (os === 'iOS') {
-                    // Try to open the iOS app first via custom scheme
-                    window.location.replace(IOS_APP_SCHEME);
-                    
-                    // If the app doesn't open within 1.5s, trigger the App Store fallback
-                    setTimeout(() => { window.location.replace(APP_STORE_URL); }, 1500);
+                    // Send directly to Apple App Store
+                    window.location.href = APP_STORE_URL;
                     return true;
                 } else if (os === 'Android') {
-                    // Try to open Android app via Intent, which handles Play Store fallback automatically
-                    window.location.replace(ANDROID_INTENT_URI);
+                    // Send directly to Google Play Store
+                    window.location.href = PLAY_STORE_URL;
                     return true;
                 }
                 
